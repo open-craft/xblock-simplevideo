@@ -6,7 +6,7 @@ This tutorial will walk you through the creation of a custom XBlock. It will all
 Installing XBlock
 -----------------
 
-First, grab the source code for XBlock at https://github.com/edx/XBlock:
+First, grab the source code for XBlock at https://github.com/edx/XBlock :
 
     $ git clone https://github.com/edx/XBlock.git
     $ cd XBlock
