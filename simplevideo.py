@@ -5,7 +5,8 @@ import requests
 
 from urlparse import urlparse
 
-from xblock.core import XBlock, Scope, Integer, String
+from xblock.core import XBlock
+from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
 
 log = logging.getLogger(__name__)
@@ -78,7 +79,7 @@ class SimpleVideoBlock(XBlock):
         return hostname, response['html']
 
     @XBlock.json_handler
-    def mark_as_watched(self, data):
+    def mark_as_watched(self, data, suffix=''):  # pylint: disable=unused-argument
         """
         Called upon completion of the video
         """
@@ -97,7 +98,7 @@ class SimpleVideoBlock(XBlock):
             """\
                 <vertical>
                     <simplevideo href="https://vimeo.com/46100581" maxwidth="800" />
-                    <div>Rate the video:</div>
+                    <html><div>Rate the video:</div></html>
                     <thumbs />
                 </vertical>
              """)

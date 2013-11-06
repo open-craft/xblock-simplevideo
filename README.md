@@ -10,7 +10,7 @@ First, grab the source code for XBlock at https://github.com/edx/XBlock :
 
     $ git clone https://github.com/edx/XBlock.git
     $ cd XBlock
-    $ gvim README.md
+    $ gvim README.rst
 
 Follow the instructions in `README.md` to get the workbench server up and running. Once you're done, you should be able to visit http://127.0.0.1:8000/
 

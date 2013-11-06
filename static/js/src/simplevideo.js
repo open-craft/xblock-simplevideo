@@ -6,7 +6,7 @@ function SimpleVideoBlock(runtime, element) {
     function on_finish(id) {
         $.ajax({
             type: "POST",
-            url: runtime.handler_url('mark_as_watched'),
+            url: runtime.handlerUrl(element, 'mark_as_watched'),
             data: JSON.stringify({watched: true}),
             success: function(result) {
                 watched_status.text(result.watched);
