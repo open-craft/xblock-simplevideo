@@ -9,6 +9,8 @@ from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
 
+from models import Answer
+
 log = logging.getLogger(__name__)
 
 
@@ -17,7 +19,7 @@ class SimpleVideoBlock(XBlock):
     An XBlock providing oEmbed capabilities for video (currently only supporting Vimeo)
     """
 
-    href = String(help="URL of the video page at the provider", default=None, scope=Scope.content)
+    href = String(help="URL of the video page at the provider", default='http://vimeo.com/70002643', scope=Scope.content)
     maxwidth = Integer(help="Maximum width of the video", default=800, scope=Scope.content)
     maxheight = Integer(help="Maximum height of the video", default=450, scope=Scope.content)
     watched = Integer(help="How many times the student has watched it?", default=0, scope=Scope.user_state)
@@ -31,24 +33,35 @@ class SimpleVideoBlock(XBlock):
         to display.
         """
         provider, embed_code = self.get_embed_code_for_url(self.href)
+
+        from pprint import pprint
+        log.info(pprint(self.__dict__, indent=4))
+
+        embed_code += u'<ul>\n'
+        for answer in Answer.objects.all():
+            embed_code += '<li>{0}</li>'.format(answer.text)
+        embed_code += u'</ul>\n'
         
         # Load the HTML fragment from within the package and fill in the template
-        html_str = pkg_resources.resource_string(__name__, "static/html/simplevideo.html")
+        html_str = pkg_resources.resource_string(__name__, "../static/html/simplevideo.html")
         frag = Fragment(unicode(html_str).format(self=self, embed_code=embed_code))
 
         # Load CSS
-        css_str = pkg_resources.resource_string(__name__, "static/css/simplevideo.css")
+        css_str = pkg_resources.resource_string(__name__, "../static/css/simplevideo.css")
         frag.add_css(unicode(css_str))
 
         # Load JS
         if provider == 'vimeo.com':
-            js_str = pkg_resources.resource_string(__name__, "static/js/lib/froogaloop.min.js")
+            js_str = pkg_resources.resource_string(__name__, "../static/js/lib/froogaloop.min.js")
             frag.add_javascript(unicode(js_str))
-            js_str = pkg_resources.resource_string(__name__, "static/js/src/simplevideo.js")
+            js_str = pkg_resources.resource_string(__name__, "../static/js/src/simplevideo.js")
             frag.add_javascript(unicode(js_str))
             frag.initialize_js('SimpleVideoBlock')
 
         return frag
+    
+    def studio_view(self, context):
+        return Fragment(u'test')
 
     def get_embed_code_for_url(self, url):
         """
@@ -77,6 +90,9 @@ class SimpleVideoBlock(XBlock):
         response = r.json()
 
         return hostname, response['html']
+
+    def has_access(*args):
+        return True
 
     @XBlock.json_handler
     def mark_as_watched(self, data, suffix=''):  # pylint: disable=unused-argument
