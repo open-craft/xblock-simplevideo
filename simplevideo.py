@@ -1,4 +1,3 @@
-
 import logging
 import pkg_resources
 import requests
@@ -96,10 +95,10 @@ class SimpleVideoBlock(XBlock):
         return [
             ("simple video", 
             """\
-                <vertical>
+                <vertical_demo>
                     <simplevideo href="https://vimeo.com/46100581" maxwidth="800" />
                     <html><div>Rate the video:</div></html>
                     <thumbs />
-                </vertical>
+                </vertical_demo>
              """)
         ]
