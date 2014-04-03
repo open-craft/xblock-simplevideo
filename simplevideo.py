@@ -97,7 +97,7 @@ class SimpleVideoBlock(XBlock):
             """\
                 <vertical_demo>
                     <simplevideo href="https://vimeo.com/46100581" maxwidth="800" />
-                    <html><div>Rate the video:</div></html>
+                    <html_demo><div>Rate the video:</div></html_demo>
                     <thumbs />
                 </vertical_demo>
              """)
