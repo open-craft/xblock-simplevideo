@@ -6,8 +6,9 @@ function SimpleVideoEditBlock(runtime, element) {
       maxwidth: $(element).find('input[name=maxwidth]').val(),
       maxheight: $(element).find('input[name=maxheight]').val()
     };
+    runtime.notify('save', {state: 'start'});
     $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
-      window.location.reload(false);
+      runtime.notify('save', {state: 'end'});
     });
   });
 
