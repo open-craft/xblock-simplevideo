@@ -1,4 +1,3 @@
-import logging
 import pkg_resources
 import requests
 
@@ -7,8 +6,6 @@ from urlparse import urlparse
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
-
-log = logging.getLogger(__name__)
 
 
 class SimpleVideoBlock(XBlock):
@@ -19,7 +16,7 @@ class SimpleVideoBlock(XBlock):
     href = String(help="URL of the video page at the provider", default=None, scope=Scope.content)
     maxwidth = Integer(help="Maximum width of the video", default=800, scope=Scope.content)
     maxheight = Integer(help="Maximum height of the video", default=450, scope=Scope.content)
-    watched = Integer(help="How many times the student has watched it?", default=0, scope=Scope.user_state)
+    watched_count = Integer(help="The number of times the student watched the video", default=0, scope=Scope.user_state)
 
     def student_view(self, context):
         """
@@ -30,7 +27,7 @@ class SimpleVideoBlock(XBlock):
         to display.
         """
         provider, embed_code = self.get_embed_code_for_url(self.href)
-        
+
         # Load the HTML fragment from within the package and fill in the template
         html_str = pkg_resources.resource_string(__name__, "static/html/simplevideo.html")
         frag = Fragment(unicode(html_str).format(self=self, embed_code=embed_code))
@@ -41,9 +38,9 @@ class SimpleVideoBlock(XBlock):
 
         # Load JS
         if provider == 'vimeo.com':
-            js_str = pkg_resources.resource_string(__name__, "static/js/lib/froogaloop.min.js")
-            frag.add_javascript(unicode(js_str))
-            js_str = pkg_resources.resource_string(__name__, "static/js/src/simplevideo.js")
+            # Load the Froogaloop library from vimeo CDN.
+            frag.add_javascript_url("//f.vimeocdn.com/js/froogaloop2.min.js")
+            js_str = pkg_resources.resource_string(__name__, "static/js/simplevideo.js")
             frag.add_javascript(unicode(js_str))
             frag.initialize_js('SimpleVideoBlock')
 
@@ -57,7 +54,7 @@ class SimpleVideoBlock(XBlock):
         href = self.href or ''
         frag = Fragment(unicode(html_str).format(href=href, maxwidth=self.maxwidth, maxheight=self.maxheight))
 
-        js_str = pkg_resources.resource_string(__name__, "static/js/src/simplevideo_edit.js")
+        js_str = pkg_resources.resource_string(__name__, "static/js/simplevideo_edit.js")
         frag.add_javascript(unicode(js_str))
         frag.initialize_js('SimpleVideoEditBlock')
 
@@ -81,7 +78,7 @@ class SimpleVideoBlock(XBlock):
             params['api'] = True
         else:
             return hostname, '<p>Unsupported video provider ({0})</p>'.format(hostname)
-        
+
         try:
             r = requests.get(oembed_url, params=params)
             r.raise_for_status()
@@ -107,18 +104,16 @@ class SimpleVideoBlock(XBlock):
         """
         Called upon completion of the video
         """
-        if not data.get('watched'):
-            log.warn('not watched yet')
-        else:
-            self.watched += 1
+        if data.get('watched'):
+            self.watched_count += 1
 
-        return {'watched': self.watched}
+        return {'watched_count': self.watched_count}
 
     @staticmethod
     def workbench_scenarios():
         """A canned scenario for display in the workbench."""
         return [
-            ("simple video", 
+            ("simple video",
             """\
                 <vertical_demo>
                     <simplevideo href="https://vimeo.com/46100581" maxwidth="800" />
