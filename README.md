@@ -1,3 +1,11 @@
+Archival notice
+===============
+
+This codebase and tutorial is archived as a read-only copy for reference.
+
+For a supported XBlock tutorial, please see the official [Open edX XBlock Tutorial](https://docs.openedx.org/projects/xblock/en/latest/xblock-tutorial/index.html).
+
+
 Tutorial
 ========
 
@@ -16,4 +24,4 @@ Follow the instructions in `README.md` to get the workbench server up and runnin
 Tutorial
 --------
 
-For the rest of the tutorial, continue to http://opencraft.com/doc/edx/xblock/tutorial.html
+For the rest of the tutorial, continue to https://doc.opencraft.com/xblock-tutorial/
